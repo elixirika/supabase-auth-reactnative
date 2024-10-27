@@ -17,7 +17,7 @@ const Auth = ({ navigation }: { navigation: any }) => {
       password: password,
     });
 
-    navigation.navigate("Overview", { session: session });
+    navigation.navigate("MainTabs", { session: session });
 
     if (error) Alert.alert(error.message);
     setLoading(false);

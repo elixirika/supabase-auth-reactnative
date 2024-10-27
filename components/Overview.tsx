@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text } from "react-native";
 
 const Overview = ({ route, navigation }: { route: any; navigation: any }) => {
-  const { session } = route.params;
+  const { session } = route.params || {};
 
   return (
     <View>
