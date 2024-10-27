@@ -1,27 +1,52 @@
-import 'react-native-url-polyfill/auto'
-import { useState, useEffect } from 'react'
-import { supabase } from './lib/supabase'
-import Auth from './components/Auth'
-import { View, Text } from 'react-native'
-import { Session } from '@supabase/supabase-js'
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { Button, Text } from "react-native";
+import "react-native-url-polyfill/auto";
+import Auth from "./components/Auth";
+import Overview from "./components/Overview";
 
-export default function App() {
-  const [session, setSession] = useState<Session | null>(null)
+type RootStackParamList = {
+  Auth: undefined;
+  Overview: { session: any };
+};
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
+const Stack = createStackNavigator<RootStackParamList>();
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-  }, [])
+const App = () => {
+  const handleLogout = (navigation: any) => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Auth" }],
+    });
+  };
 
   return (
-    <View>
-      <Auth />
-      {session && session.user && <Text>{session.user.id}</Text>}
-    </View>
-  )
-}
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Auth">
+        <Stack.Screen name="Auth" component={Auth} />
+        <Stack.Screen
+          name="Overview"
+          component={Overview}
+          options={({ navigation }) => ({
+            headerTitle: () => (
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>Overview</Text>
+            ),
+            headerRight: () => (
+              <>
+                <Button
+                  title="Logout"
+                  onPress={() => handleLogout(navigation)}
+                />
+              </>
+            ),
+            headerLeftLabelVisible: false,
+            headerTitleAlign: "center",
+          })}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default App;
